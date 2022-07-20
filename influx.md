@@ -106,3 +106,51 @@ influx bucket create --name icinga2
 influx auth create --write-bucket abcde
 influx auth create --read-bucket abcde
 ```
+
+```bash
+icinga2 feature enable infludb2
+```
+
+```diff
+-  //host = "127.0.0.1"
+-  //port = 8086
+-  //organization = "monitoring"
+-  //bucket = "icinga2"
+-  //auth_token = "ABCDEvwxyz0189-_"
+-  //flush_threshold = 1024
+-  //flush_interval = 10s
+-  //host_template = {
+-  //  measurement = "$host.check_command$"
+-  //  tags = {
+-  //    hostname = "$host.name$"
+-  //  }
+-  //}
+-  //service_template = {
+-  //  measurement = "$service.check_command$"
+-  //  tags = {
+-  //    hostname = "$host.name$"
+-  //    service = "$service.name$"
+-  //  }
+-  //}
++  host = "127.0.0.1"
++  port = 8086
++  organization = "example"
++  bucket = "icinga2"
++  auth_token = "abdef234234"
++  //flush_threshold = 1024
++  //flush_interval = 10s
++  enable_send_threshold = true
++  host_template = {
++    measurement = "$host.check_command$"
++    tags = {
++      hostname = "$host.name$"
++    }
++  }
++  service_template = {
++    measurement = "$service.check_command$"
++    tags = {
++      hostname = "$host.name$"
++      service = "$service.name$"
++    }
++  }
+```
