@@ -86,7 +86,7 @@ mysql -p icinga2 < /usr/share/icinga2-ido-mysql/schema/mysql.sql
 icinga2 feature enable ido-mysql
 ```
 
-#### Configure database access for icinga instance 
+#### Configure database access for icinga instance
 
 ```bash
 vim /etc/icinga2/features-available/ido-mysql.conf
@@ -107,7 +107,7 @@ apt-get install apache2 icingacli icingaweb2 icingaweb2-module-monitoring \
                 php php-intl php-imagick php-gd php-mysql php-curl php-mbstring
 ```
 
-#### Set PHP default timezone 
+#### Set PHP default timezone
 
 ```bash
 vim /etc/php/7.3/apache2/php.ini
@@ -154,65 +154,65 @@ icingacli setup token create
 
 http://your-public-host.name/icingaweb2/setup
 
-Setup Token: `Your Token`  
-*Next*  
-  
-Modules enabled: `Monitoring`   
-*Next*  
-  
-Authentication Type: `Database`  
-*Next*  
-  
-Resource Name: `icingaweb_db`  
-Database Type: `MySQL`  
-Host: `127.0.0.1`  
-Port: `3306`  
-Database Name: `icingaweb2`  
-Username: `icingaweb2`  
-Password: `your-icingaweb2-pwd`  
-Character Set: `utf8`  
-Use SSL: `False`  
-*Next*  
-  
-Backend Name: `icingaweb2`  
-*Next*  
-  
-Username: `admin`  
-Password: `your-admin-pwd`  
-Repeat password: `your-admin-pwd`  
-*Next*  
-  
-Show Stacktraces: `Yes`  
-Show Application State Messages: `Yes`  
-User Preference Storage Type: `Database`  
-Logging Type: `Syslog`  
-Logging Level: `Error`  
-Application Prefix: `icingaweb2`  
-Facility: `user`  
-*Next*  
-  
-Backend Name: `icinga`  
-Backend Type: `IDO`  
-*Next*  
-  
-Resource Name: `icinga_ido`  
-Database Type: `MySQL`  
-Host: `127.0.0.1`  
-Port: `3306`  
-Database Name: `icinga2`  
-Username: `icinga2`  
-Password: `your-icinga2-pwd`  
-Character Set: `utf8`  
-Use SSL: `False`  
-*Next*  
-  
-Transport Name: `icinga2`  
-Transport Type: `Local Command File`  
-Command File: `/var/run/icinga2/cmd/icinga2.cmd`  
-*Next*  
-  
-Protected Custom Variables: `*pw*,*pass*,community`  
-*Next*  
+Setup Token: `Your Token`
+*Next*
+
+Modules enabled: `Monitoring`
+*Next*
+
+Authentication Type: `Database`
+*Next*
+
+Resource Name: `icingaweb_db`
+Database Type: `MySQL`
+Host: `127.0.0.1`
+Port: `3306`
+Database Name: `icingaweb2`
+Username: `icingaweb2`
+Password: `your-icingaweb2-pwd`
+Character Set: `utf8`
+Use SSL: `False`
+*Next*
+
+Backend Name: `icingaweb2`
+*Next*
+
+Username: `admin`
+Password: `your-admin-pwd`
+Repeat password: `your-admin-pwd`
+*Next*
+
+Show Stacktraces: `Yes`
+Show Application State Messages: `Yes`
+User Preference Storage Type: `Database`
+Logging Type: `Syslog`
+Logging Level: `Error`
+Application Prefix: `icingaweb2`
+Facility: `user`
+*Next*
+
+Backend Name: `icinga`
+Backend Type: `IDO`
+*Next*
+
+Resource Name: `icinga_ido`
+Database Type: `MySQL`
+Host: `127.0.0.1`
+Port: `3306`
+Database Name: `icinga2`
+Username: `icinga2`
+Password: `your-icinga2-pwd`
+Character Set: `utf8`
+Use SSL: `False`
+*Next*
+
+Transport Name: `icinga2`
+Transport Type: `Local Command File`
+Command File: `/var/run/icinga2/cmd/icinga2.cmd`
+*Next*
+
+Protected Custom Variables: `*pw*,*pass*,community`
+*Next*
 
 ## Setup graphing module Grafana
 
@@ -224,12 +224,6 @@ wget -O - https://packages.grafana.com/gpg.key | apt-key add -
 echo "deb https://packages.grafana.com/oss/deb stable main" > /etc/apt/sources.list.d/grafana.list
 ```
 
-#### Get packages
-
-```bash
-apt-get update
-apt-get install grafana influxdb influxdb-client
-```
 
 #### Enable and start Grafana service
 
@@ -239,88 +233,26 @@ systemctl enable grafana-server.service
 systemctl start grafana-server.service
 ```
 
-#### Create database and user
-
-```bash
-influx
-```
-```sql
-CREATE DATABASE icinga2;
-CREATE USER icinga2 WITH PASSWORD 'your-icinga2-pwd';
-```
-
-#### Send performance data to influx
-
-```bash
-icinga2 feature enable influxdb
-
-vim /etc/icinga2/features-enabled/influxdb.conf
-```
-```diff
--  //host = "127.0.0.1"
--  //port = 8086
--  //database = "icinga2"
--  //flush_threshold = 1024
--  //flush_interval = 10s
--  //host_template = {
--  //  measurement = "$host.check_command$"
--  //  tags = {
--  //    hostname = "$host.name$"
--  //  }
--  //}
--  //service_template = {
--  //  measurement = "$service.check_command$"
--  //  tags = {
--  //    hostname = "$host.name$"
--  //    service = "$service.name$"
--  //  }
--  //}
-+  host = "127.0.0.1"
-+  port = 8086
-+  database = "icinga2"
-+  username = "icinga2"
-+  password = "your-icinga2-pwd"
-+  enable_send_thresholds = true
-+  enable_send_metadata = true
-+  flush_threshold = 1024
-+  flush_interval = 10s
-+  host_template = {
-+    measurement = "$host.check_command$"
-+    tags = {
-+      hostname = "$host.name$"
-+    }
-+  }
-+  service_template = {
-+    measurement = "$service.check_command$"
-+    tags = {
-+      hostname = "$host.name$"
-+      service = "$service.name$"
-+    }
-+  }
-```
-```bash
-systemctl restart icinga2.service
-```
 
 #### Navigate to Grafana web interface
 
-Url: `http://your-public-host.name:3000`  
-Username: `admin`  
-Password: `admin`  
+Url: `http://your-public-host.name:3000`
+Username: `admin`
+Password: `admin`
 
 #### Create new Grafana datasource
 
 Add Datasource: http://your-public-host.name:3000/datasources/new?gettingstarted
 
-Name: `InfluxDB`  
-Type: `InfluxDB`  
-Default: `Yes`  
-  
-Url: `http://127.0.0.1:8086`  
-Access: `Server (Default)`  
-  
-Database: `icinga2`  
-User: `icinga2`  
+Name: `InfluxDB`
+Type: `InfluxDB`
+Default: `Yes`
+
+Url: `http://127.0.0.1:8086`
+Access: `Server (Default)`
+
+Database: `icinga2`
+User: `icinga2`
 Password: `your-icinga2-pwd`
 
 #### Import Grafana dashboard
