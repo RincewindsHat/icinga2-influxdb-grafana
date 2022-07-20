@@ -139,7 +139,7 @@ icinga2 feature enable infludb2
 +  auth_token = "abdef234234"
 +  //flush_threshold = 1024
 +  //flush_interval = 10s
-+  enable_send_threshold = true
++  enable_send_thresholds = true
 +  host_template = {
 +    measurement = "$host.check_command$"
 +    tags = {
